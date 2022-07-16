@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using DependencyInjection.AutoService;
-using DependencyInjection.AutoService.Helper;
+using Meteors;
+using Meteors.Helper;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -47,14 +47,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddAutoService(this IServiceCollection services)
-            => _AddAutoServiceInject(services, DllDependencies.AbleNameSpaceToType().ToArray());
+            => _AddAutoServiceInject(services, ExtensionMethods.DllDependencies.AbleNameSpaceToType().ToArray());
 
-
-        /// <summary>
-        /// Get all namespaces in same app luncher folder
-        /// </summary>
-        private static string[] DllDependencies => Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).
-           Where(x => Path.GetExtension(x) == ".dll").Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
 
 
         /// <summary>

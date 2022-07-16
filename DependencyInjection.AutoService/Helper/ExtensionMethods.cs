@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace DependencyInjection.AutoService.Helper
+namespace Meteors.Helper
 {
     /// <summary>
     /// Basics extensions
@@ -42,6 +42,14 @@ namespace DependencyInjection.AutoService.Helper
             _ => default
         };
 #nullable enable
+
+
+        /// <summary>
+        /// Get all namespaces in same app luncher folder
+        /// </summary>
+        internal static string[] DllDependencies => Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).
+           Where(x => Path.GetExtension(x) == ".dll").Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
+
 
     }
 }

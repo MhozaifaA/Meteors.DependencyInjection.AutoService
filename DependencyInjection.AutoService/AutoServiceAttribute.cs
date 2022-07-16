@@ -1,7 +1,7 @@
-﻿using DependencyInjection.AutoService.Helper;
+﻿using Meteors.Helper;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DependencyInjection.AutoService
+namespace Meteors
 {
     /// <summary>
     /// Custom attribute uses to inject all Servicers .
