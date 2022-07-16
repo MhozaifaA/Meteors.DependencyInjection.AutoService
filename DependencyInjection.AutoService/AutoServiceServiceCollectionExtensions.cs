@@ -83,19 +83,25 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
             {
-                Type inheritanceInterfaceType = type.GetInterface("I" + type.Name);
-                if (inheritanceInterfaceType is null)
-                    throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} .");
-                switch (AutoServiceAttribute.GetLifetime(type))
+                (ServiceLifetime lifetime,Type? interfaceType) = AutoServiceAttribute.GetProperties(type);
+
+                if (interfaceType is null)
+                {
+                    interfaceType = type.GetInterface("I" + type.Name);
+                    if (interfaceType is null)
+                        throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} .");
+                }
+
+                switch (lifetime)
                 {
                     case ServiceLifetime.Singleton:
-                        services.AddSingleton(inheritanceInterfaceType, type);
+                        services.AddSingleton(interfaceType, type);
                         break;
                     case ServiceLifetime.Scoped:
-                        services.AddScoped(inheritanceInterfaceType, type);
+                        services.AddScoped(interfaceType, type);
                         break;
                     case ServiceLifetime.Transient:
-                        services.AddTransient(inheritanceInterfaceType, type);
+                        services.AddTransient(interfaceType, type);
                         break;
                 }
             }
