@@ -1,6 +1,8 @@
 # [Meteors]  DependencyInjection.AutoService
 <img alt="Nuget" src="https://img.shields.io/nuget/dt/Meteors.DependencyInjection.AutoService?color=green&logo=nuget&logoColor=blue&style=for-the-badge">
 
+### ``Install-Package Meteors.DependencyInjection.AutoService -Version 6.0.0``
+
 > `version 1.0 net6.0`
 ![Meteor logo pack](https://user-images.githubusercontent.com/48151918/175791394-3913f060-5551-435c-adda-5bc487964f1c.png)
 
