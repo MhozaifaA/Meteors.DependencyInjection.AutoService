@@ -102,27 +102,17 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
             {
-                (ServiceLifetime lifetime,Type? interfaceType) = AutoServiceAttribute.GetProperties(type);
+                (ServiceLifetime lifetime,Type? implementationType,bool useImplementation) = AutoServiceAttribute.GetProperties(type);
 
-                if (interfaceType is null)
+                if (implementationType is null)
                 {
-                    interfaceType = type.GetInterface("I" + type.Name);
-                    if (interfaceType is null)
+                    implementationType = type.GetInterface("I" + type.Name);
+                    if (implementationType is null)
                         throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} .");
                 }
-
-                switch (lifetime)
-                {
-                    case ServiceLifetime.Singleton:
-                        services.AddSingleton(interfaceType, type);
-                        break;
-                    case ServiceLifetime.Scoped:
-                        services.AddScoped(interfaceType, type);
-                        break;
-                    case ServiceLifetime.Transient:
-                        services.AddTransient(interfaceType, type);
-                        break;
-                }
+             
+                ServiceDescriptor item = new ServiceDescriptor(type, implementationType, lifetime);
+                services.Add(item);
             }
 
         }

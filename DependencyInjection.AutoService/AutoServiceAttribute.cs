@@ -29,7 +29,8 @@ namespace Meteors
 {
     /// <summary>
     /// Custom attribute uses to inject all Servicers .
-    /// <para>Warning: should inhernet all services from <see langword="I"/>[Name your repo] </para>
+    /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+    /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class AutoServiceAttribute : Attribute
@@ -43,25 +44,44 @@ namespace Meteors
         /// Inner interface  .
         /// <para>Default value: will take same service(class name) with "I" letter at begin</para>
         /// </summary>
-        public Type? InterfaceType { get; private set; }
+        public Type? ImplementationType { get; private set; }
 
-     
+        /// <summary>
+        ///  Use implementation default/(only once) Interface.
+        ///  <para></para>
+        ///  Works only if <see cref="ImplementationType"/> equal null,
+        ///  <list type="bullet">
+        ///  <item>  <see langword="true"/>: use to service type with implementation  only Interface </item> 
+        ///  <item>  <see langword="false"/>: use to service type without implementation </item> 
+        /// </list>
+        /// </summary>
+        public bool UseImplementation { get; private set; } = true;
+
 
         /// <summary>
         /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="Type" langword="interface"/>.
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         /// <param name="lifetime"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type? interfaceType) => (LifetimeType, InterfaceType) = (lifetime, interfaceType);
+        public AutoServiceAttribute(ServiceLifetime lifetime, Type? interfaceType) => (LifetimeType, ImplementationType) = (lifetime, interfaceType);
 
 
         /// <summary>
         /// Default constructor pass not parameters inject <see cref="ServiceLifetime.Scoped"/> .
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         public AutoServiceAttribute() : this(ServiceLifetime.Scoped) { }
 
 
         /// <summary>
         /// Defult constructor pass <see cref="ServiceLifetime"/> .
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         /// <param name="lifetime"></param>
         public AutoServiceAttribute(ServiceLifetime lifetime) : this(lifetime,default) { }
@@ -69,6 +89,9 @@ namespace Meteors
 
         /// <summary>
         /// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         /// <param name="lifetime"></param>
         public AutoServiceAttribute(string lifetime) : this(lifetime.ToEnum<ServiceLifetime>()) { }
@@ -83,6 +106,9 @@ namespace Meteors
 
         /// <summary>
         ///  Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> and pass  <see cref="Type" langword="interface"/>.
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         /// <param name="lifetime"></param>
         public AutoServiceAttribute(string lifetime, Type interfaceType) : this(lifetime.ToEnum<ServiceLifetime>(), interfaceType) { }
@@ -107,7 +133,7 @@ namespace Meteors
         /// <returns> Type? </returns>
         internal static Type? GetInterface(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(x => x.InterfaceType)
+                            .Cast<AutoServiceAttribute>().Select(x => x.ImplementationType)
                             .Single();
 
 
@@ -116,9 +142,9 @@ namespace Meteors
         /// </summary>
         /// <param name="type"></param>
         /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime,Type?) GetProperties(Type type)
+        internal static (ServiceLifetime,Type?,bool) GetProperties(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(x => (x.LifetimeType,x.InterfaceType))
+                            .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation))
                             .Single();
 
     }
