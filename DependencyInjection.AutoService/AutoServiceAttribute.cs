@@ -51,7 +51,7 @@ namespace Meteors
         ///  <para></para>
         ///  Works only if <see cref="ImplementationType"/> equal null,
         ///  <list type="bullet">
-        ///  <item>  <see langword="true"/>: use to service type with implementation  only Interface </item> 
+        ///  <item>  <see langword="true"/>: use to service type with implementation only Interface </item> 
         ///  <item>  <see langword="false"/>: use to service type without implementation </item> 
         /// </list>
         /// </summary>
