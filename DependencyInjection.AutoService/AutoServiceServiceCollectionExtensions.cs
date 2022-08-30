@@ -102,21 +102,26 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
             {
-                (ServiceLifetime lifetime, Type? implementationType, bool useImplementation) = AutoServiceAttribute.GetProperties(type);
+                (ServiceLifetime lifetime, Type? implementationType, bool? useImplementation) = AutoServiceAttribute.GetProperties(type);
+
+                ServiceDescriptor item = default;
 
                 if (implementationType is null)
                 {
-                    if (useImplementation)
+                    if (useImplementation is null || useImplementation is true)  // check work flow of useImplementation if init value or leave as null=true in condition but later as false,,in same brack
                     {
                         implementationType = type.GetInterface("I" + type.Name);
                         if (implementationType is null)
                         {
                             var allimplementationTypes = type.GetInterfaces();
                             var implementationTypes = allimplementationTypes.Except(
-                                             allimplementationTypes.SelectMany(t => t.GetInterfaces()));
+                                             allimplementationTypes.SelectMany(i => i.GetInterfaces()));
 
                             if (implementationTypes.Count() > 0)
                                 implementationType = implementationTypes.First();
+
+                            if (implementationType is null &&  useImplementation is null) // service as  useImplementation = false
+                                item = new ServiceDescriptor(type,lifetime);
 
                             if (implementationType is null)
                                 throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} or no Interface taken as first default.");
@@ -124,7 +129,12 @@ namespace Microsoft.Extensions.DependencyInjection
                     }
                 }
 
-                ServiceDescriptor item = new ServiceDescriptor(type, implementationType, lifetime);
+                if (implementationType is not null)                
+                    item = new ServiceDescriptor(type, implementationType, lifetime);
+
+                if (useImplementation is false)
+                    item = new ServiceDescriptor(type, lifetime);
+
                 services.Add(item);
             }
 

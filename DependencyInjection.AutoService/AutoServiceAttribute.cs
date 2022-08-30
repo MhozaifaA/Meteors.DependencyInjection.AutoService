@@ -49,13 +49,14 @@ namespace Meteors
         /// <summary>
         ///  Use implementation default/(only once) Interface.
         ///  <para></para>
-        ///  Works only if <see cref="ImplementationType"/> equal null,
+        ///  Works only if <see cref="ImplementationType"/> equal null(false, true, null),
         ///  <list type="bullet">
         ///  <item>  <see langword="true"/>: use to service type with implementation only Interface </item> 
         ///  <item>  <see langword="false"/>: use to service type without implementation </item> 
+        ///  <item>  <see langword="null"/>: use to service type with implementation only Interface but if ImplementationType stil null will be false work with condition as true </item> 
         /// </list>
         /// </summary>
-        public bool UseImplementation { get; private set; } = true;
+        public bool? UseImplementation { get; private set; }
 
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace Meteors
         /// </summary>
         /// <param name="type"></param>
         /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime,Type?,bool) GetProperties(Type type)
+        internal static (ServiceLifetime,Type?,bool?) GetProperties(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
                             .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation))
                             .Single();
