@@ -31,6 +31,16 @@ namespace Meteors
     /// Custom attribute uses to inject all Servicers .
     /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
     /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+    /// <list type="bullet">
+    /// <item>[AutoService()]</item>
+    /// <item>[AutoService(<see cref="LifetimeType"/>)]</item>
+    /// <item>[AutoService(<see cref="ImplementationType"/>)]</item>
+    /// <item>[AutoService(<see cref="UseImplementation"/>)]</item>
+    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="ImplementationType"/>)]</item>
+    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="UseImplementation"/>)]</item>
+    /// <item>[AutoService(<see cref="ImplementationType"/>,<see cref="UseImplementation"/>)]</item>
+    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="ImplementationType"/>,<see cref="UseImplementation"/>)]</item>
+    /// </list>
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class AutoServiceAttribute : Attribute
@@ -57,6 +67,17 @@ namespace Meteors
         /// </list>
         /// </summary>
         public bool? UseImplementation { get; private set; }
+
+
+
+        /// <summary>
+        /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="Type" langword="interface"/>.
+        /// Custom attribute uses to inject all Servicers .
+        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+        /// </summary>
+        /// <param name="lifetime"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime = ServiceLifetime.Scoped, Type? interfaceType = default, bool? useImplementation = default) => (LifetimeType, ImplementationType, useImplementation) = (lifetime, interfaceType, useImplementation);
 
 
         /// <summary>
@@ -87,6 +108,9 @@ namespace Meteors
         /// <param name="lifetime"></param>
         public AutoServiceAttribute(ServiceLifetime lifetime) : this(lifetime,default) { }
 
+
+
+        //string lifetime not supported overwrite of UseImplementation 
 
         /// <summary>
         /// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .

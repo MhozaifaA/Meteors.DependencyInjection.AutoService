@@ -95,6 +95,16 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         /// Inject all <see cref="AutoServiceAttribute"/> users by <see cref="ServiceLifetime"/>
+        /// <list type="bullet">
+        /// <item>[AutoService()]</item>
+        /// <item>[AutoService(lifetime)]</item>
+        /// <item>[AutoService(implementationType)]</item>
+        /// <item>[AutoService(useImplementation)]</item>
+        /// <item>[AutoService(lifetime,implementationType)]</item>
+        /// <item>[AutoService(lifetime,useImplementation)]</item>
+        /// <item>[AutoService(implementationType,useImplementation)]</item>
+        /// <item>[AutoService(lifetime,implementationType,useImplementation)]</item>
+        /// </list>
         /// </summary>
         /// <param name="services"></param>
         /// <param name="type"></param>
