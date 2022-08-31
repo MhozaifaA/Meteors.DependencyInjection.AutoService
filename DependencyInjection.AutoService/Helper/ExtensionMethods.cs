@@ -33,7 +33,7 @@ namespace Meteors.Helper
     {
 
         /// <summary>
-        /// Converts the string representation of <see cref="{T}"/>
+        /// Converts the string representation of <see cref="Type"/>
         /// enumerated constants to an equivalent enumerated object. A parameter specifies
         /// whether the operation is case-insensitive.
         /// <para>ignoreCase is auto active <see langword="true"/> .</para>
