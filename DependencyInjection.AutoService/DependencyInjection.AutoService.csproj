@@ -15,6 +15,7 @@
     <RepositoryUrl>https://github.com/MhozaifaA/DependencyInjection.AutoService.git</RepositoryUrl>
     <PackageTags>DI, CSharp, DependencyInjection, Service, Host</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Auto inject services, Microsoft.Extensions.DependencyInjection, easy to add your services without need to touch startup, powerful, useful with multi dll's shearing same startup</Description>
   </PropertyGroup>
 
   <ItemGroup>
