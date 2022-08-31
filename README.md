@@ -1,7 +1,7 @@
 # [Meteors]  DependencyInjection.AutoService
 [<img alt="Nuget" src="https://img.shields.io/nuget/dt/Meteors.DependencyInjection.AutoService?color=green&logo=nuget&logoColor=blue&style=for-the-badge">](https://www.nuget.org/packages/Meteors.DependencyInjection.AutoService/)
 
-### ``Install-Package Meteors.DependencyInjection.AutoService -Version 6.0.0``
+### ``Install-Package Meteors.DependencyInjection.AutoService -Version 6.2.0``
 
 > `version 1.0 net6.0`
 
@@ -19,12 +19,42 @@ build.Services.AddAutoService();
 
 ...
 [AutoService(ServiceLifeTime, InterfaceType)]
+[AutoService(ServiceLifeTime, InterfaceType)]
+   
+[AutoService()]
+[AutoService(LifetimeType)]
+[AutoService(ImplementationType)]
+[AutoService(UseImplementation)]
+[AutoService(LifetimeType,ImplementationType)]
+[AutoService(LifetimeType,UseImplementation)]
+[AutoService(ImplementationType,UseImplementation)] 
+[AutoService(LifetimeType,ImplementationType,UseImplementation)]
+
 
 [AutoService] //default Scoped
 class AnyService : IAnyService { }
 
 
-[AutoService(typeOf(ICustomInterfaceName))]
+[AutoService(typeOf(ICustomInterfaceName))] //take Implementation
+class AnyService : ICustomInterfaceName { }
+
+
+[AutoService(typeOf(ICustomInterfaceName1))] //take Implementation 1
+class AnyService : ICustomInterfaceName,ICustomInterfaceName1,ICustomInterfaceName2 { }
+
+
+
+[AutoService] //take Implementation IAnyService, is not first but same I + service-name
+class AnyService : ICustomInterfaceName,IAnyService,ICustomInterfaceName2 { }
+
+
+[AutoService] //take class
+class AnyService {}
+
+[AutoService]//as UseImplementation=true or null and take first interface
+class AnyService : ICustomInterfaceName { }
+
+[AutoService(false)] //UseImplementation=false
 class AnyService : ICustomInterfaceName { }
 
 
