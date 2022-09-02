@@ -139,7 +139,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
 
                 if (implementationType is not null)
-                    item = new ServiceDescriptor(type, implementationType, lifetime);
+                    item = new ServiceDescriptor(implementationType ,type,lifetime);
 
                 if (useImplementation is false)
                     item = new ServiceDescriptor(type, lifetime);
