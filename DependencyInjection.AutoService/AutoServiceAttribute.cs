@@ -31,7 +31,7 @@ namespace Meteors
     /// Custom attribute uses to inject all Servicers .
     /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
     /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-    /// <list type="bullet">
+    /// <list type="number">
     /// <item>[AutoService()]</item>*
     /// <item>[AutoService(<see cref="LifetimeType"/>)]</item>*
     /// <item>[AutoService(<see cref="ImplementationType"/>)]</item>*

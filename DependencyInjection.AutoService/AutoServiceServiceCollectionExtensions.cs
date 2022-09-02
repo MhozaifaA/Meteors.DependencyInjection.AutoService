@@ -142,7 +142,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     item = new ServiceDescriptor(implementationType ,type,lifetime);
 
                 if (useImplementation is false)
-                    item = new ServiceDescriptor(type, lifetime);
+                    item = new ServiceDescriptor(type, type, lifetime);
 
                 services.Add(item!);
             }
