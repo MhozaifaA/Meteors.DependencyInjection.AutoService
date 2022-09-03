@@ -81,7 +81,7 @@ namespace Meteors
         /// <param name="lifetime"></param>
         public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
 
-   
+
         /// <summary>
         /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="Type" langword="interface"/>.
         /// Custom attribute uses to inject all Servicers .
@@ -159,7 +159,7 @@ namespace Meteors
         public AutoServiceAttribute(bool useImplementation) : this(ServiceLifetime.Scoped, useImplementation) { }
 
 
-      
+
 
         /// <summary>
         /// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
@@ -211,7 +211,7 @@ namespace Meteors
         /// </summary>
         /// <param name="type"></param>
         /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime,Type?,bool?) GetProperties(Type type)
+        internal static (ServiceLifetime, Type?, bool?) GetProperties(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
                             .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation))
                             .Single();
