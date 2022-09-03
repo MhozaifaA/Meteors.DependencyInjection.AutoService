@@ -79,7 +79,7 @@ namespace Meteors
         /// <param name="useImplementation"></param>
         /// <param name="interfaceType"></param>
         /// <param name="lifetime"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type? interfaceType, bool? useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
+        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
 
    
         /// <summary>
