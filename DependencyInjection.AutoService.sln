@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.AutoService", "DependencyInjection.AutoService\DependencyInjection.AutoService.csproj", "{DB826342-FF8E-4833-8BBB-C90C75D6A3F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection.AutoService", "DependencyInjection.AutoService\DependencyInjection.AutoService.csproj", "{DB826342-FF8E-4833-8BBB-C90C75D6A3F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoService.Test", "AutoService.Test\AutoService.Test.csproj", "{7FECCDC7-A8E4-40ED-98F3-FBFD34B54625}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DB826342-FF8E-4833-8BBB-C90C75D6A3F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB826342-FF8E-4833-8BBB-C90C75D6A3F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB826342-FF8E-4833-8BBB-C90C75D6A3F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FECCDC7-A8E4-40ED-98F3-FBFD34B54625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FECCDC7-A8E4-40ED-98F3-FBFD34B54625}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FECCDC7-A8E4-40ED-98F3-FBFD34B54625}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FECCDC7-A8E4-40ED-98F3-FBFD34B54625}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
