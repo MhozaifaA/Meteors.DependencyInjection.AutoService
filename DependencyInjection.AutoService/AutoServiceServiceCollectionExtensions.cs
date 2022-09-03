@@ -130,19 +130,19 @@ namespace Microsoft.Extensions.DependencyInjection
                             implementationType = implementationTypes.First();
 
                         if (implementationType is null && useImplementation is null) // service as  useImplementation = false
-                            item = new ServiceDescriptor(type, lifetime);
+                            item = new ServiceDescriptor(type, type, lifetime);
 
-                        if (implementationType is null)
+                        if (implementationType is null && item is null)
                             throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} or no Interface taken as first default.");
                     }
                 }
 
 
                 if (implementationType is not null)
-                    item = new ServiceDescriptor(type, implementationType, lifetime);
+                    item = new ServiceDescriptor(implementationType, type, lifetime);
 
                 if (useImplementation is false)
-                    item = new ServiceDescriptor(type, lifetime);
+                    item = new ServiceDescriptor(type, type, lifetime);
 
                 services.Add(item!);
             }

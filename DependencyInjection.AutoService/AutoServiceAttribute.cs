@@ -31,7 +31,7 @@ namespace Meteors
     /// Custom attribute uses to inject all Servicers .
     /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
     /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-    /// <list type="bullet">
+    /// <list type="number">
     /// <item>[AutoService()]</item>*
     /// <item>[AutoService(<see cref="LifetimeType"/>)]</item>*
     /// <item>[AutoService(<see cref="ImplementationType"/>)]</item>*
@@ -79,9 +79,9 @@ namespace Meteors
         /// <param name="useImplementation"></param>
         /// <param name="interfaceType"></param>
         /// <param name="lifetime"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type? interfaceType, bool? useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
+        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
 
-   
+
         /// <summary>
         /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="Type" langword="interface"/>.
         /// Custom attribute uses to inject all Servicers .
@@ -159,7 +159,7 @@ namespace Meteors
         public AutoServiceAttribute(bool useImplementation) : this(ServiceLifetime.Scoped, useImplementation) { }
 
 
-      
+
 
         /// <summary>
         /// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
@@ -211,7 +211,7 @@ namespace Meteors
         /// </summary>
         /// <param name="type"></param>
         /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime,Type?,bool?) GetProperties(Type type)
+        internal static (ServiceLifetime, Type?, bool?) GetProperties(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
                             .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation))
                             .Single();
