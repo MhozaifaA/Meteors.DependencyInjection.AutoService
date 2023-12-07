@@ -1,4 +1,4 @@
-﻿/*
+/*
 MIT License
 
 Copyright (c) 2022 Huzaifa Aseel
@@ -68,6 +68,10 @@ namespace Meteors
         /// </summary>
         public bool? UseImplementation { get; private set; }
 
+        /// <summary>
+        /// Get the key of the service, if applicable.
+        /// </summary>
+        public object? ServiceKey { get; private set; }
 
 
         /// <summary>
@@ -79,7 +83,8 @@ namespace Meteors
         /// <param name="useImplementation"></param>
         /// <param name="interfaceType"></param>
         /// <param name="lifetime"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation) => (LifetimeType, ImplementationType, UseImplementation) = (lifetime, interfaceType, useImplementation);
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation, object? serviceKey = null) => (LifetimeType, ImplementationType, UseImplementation,ServiceKey) = (lifetime, interfaceType, useImplementation, serviceKey);
 
 
         /// <summary>
@@ -90,7 +95,8 @@ namespace Meteors
         /// </summary>
         /// <param name="lifetime"></param>
         /// <param name="interfaceType"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType) => (LifetimeType, ImplementationType) = (lifetime, interfaceType);
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, object? serviceKey = null) => (LifetimeType, ImplementationType, ServiceKey) = (lifetime, interfaceType, serviceKey);
 
 
 
@@ -102,7 +108,8 @@ namespace Meteors
         /// </summary>
         /// <param name="lifetime"></param>
         /// <param name="useImplementation"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, bool useImplementation) => (LifetimeType, UseImplementation) = (lifetime, useImplementation);
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime, bool useImplementation, object? serviceKey = null) => (LifetimeType, UseImplementation, ServiceKey) = (lifetime, useImplementation, serviceKey);
 
 
 
@@ -115,7 +122,8 @@ namespace Meteors
         /// </summary>
         /// <param name="useImplementation"></param>
         /// <param name="interfaceType"></param>
-        public AutoServiceAttribute(Type interfaceType, bool useImplementation) : this(ServiceLifetime.Scoped, interfaceType, useImplementation) { }
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(Type interfaceType, bool useImplementation, object? serviceKey = null) : this(ServiceLifetime.Scoped, interfaceType, useImplementation, serviceKey) { }
 
 
 
@@ -125,7 +133,8 @@ namespace Meteors
         /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
         /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
-        public AutoServiceAttribute() : this(ServiceLifetime.Scoped) { }
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(object? serviceKey = null) : this(ServiceLifetime.Scoped, serviceKey) { }
 
 
         /// <summary>
@@ -135,7 +144,8 @@ namespace Meteors
         /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
         /// </summary>
         /// <param name="lifetime"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime) => LifetimeType = lifetime;
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime, object? serviceKey = null) => (LifetimeType, ServiceKey) = (lifetime, serviceKey);
 
 
 
@@ -145,7 +155,8 @@ namespace Meteors
         /// Default constructor pass <see cref="Type" langword="interface"/>.
         /// </summary>
         /// <param name="interfaceType">inteface to inject with this service</param>
-        public AutoServiceAttribute(Type interfaceType) : this(ServiceLifetime.Scoped, interfaceType) { }
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(Type interfaceType, object? serviceKey = null) : this(ServiceLifetime.Scoped, interfaceType, serviceKey) { }
 
 
         /// <summary>
@@ -156,31 +167,34 @@ namespace Meteors
         /// <para>when <see cref="UseImplementation" langword="false"/>  will igonre implement and inject service </para>
         /// </summary>
         /// <param name="useImplementation"></param>
-        public AutoServiceAttribute(bool useImplementation) : this(ServiceLifetime.Scoped, useImplementation) { }
+        /// <param name="serviceKey"></param>
+        public AutoServiceAttribute(bool useImplementation, object? serviceKey = null) : this(ServiceLifetime.Scoped, useImplementation, serviceKey) { }
 
 
 
 
-        /// <summary>
-        /// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
-        /// Custom attribute uses to inject all Servicers .
-        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// </summary>
-        /// <param name="lifetime"></param>
-        public AutoServiceAttribute(string lifetime) : this(lifetime.ToEnum<ServiceLifetime>()) { }
+        ///// <summary>
+        ///// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
+        ///// Custom attribute uses to inject all Servicers .
+        ///// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        ///// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+        ///// </summary>
+        ///// <param name="lifetime"></param>
+        ///// <param name="serviceKey"></param>
+        //public AutoServiceAttribute(string lifetime, object? serviceKey = null) : this(lifetime.ToEnum<ServiceLifetime>(), serviceKey) { }
 
 
 
-        /// <summary>
-        ///  Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> and pass  <see cref="Type" langword="interface"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// </summary>
-        /// <param name="lifetime"></param>
-        /// <param name="interfaceType"></param>
-        public AutoServiceAttribute(string lifetime, Type interfaceType) : this(lifetime.ToEnum<ServiceLifetime>(), interfaceType) { }
+        ///// <summary>
+        /////  Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> and pass  <see cref="Type" langword="interface"/>.
+        ///// Custom attribute uses to inject all Servicers .
+        ///// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
+        ///// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+        ///// </summary>
+        ///// <param name="lifetime"></param>
+        ///// <param name="interfaceType"></param>
+        ///// <param name="serviceKey"></param>
+        //public AutoServiceAttribute(string lifetime, Type interfaceType, object? serviceKey = null) : this(lifetime.ToEnum<ServiceLifetime>(), interfaceType, serviceKey) { }
 
 
 
@@ -211,10 +225,16 @@ namespace Meteors
         /// </summary>
         /// <param name="type"></param>
         /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime, Type?, bool?) GetProperties(Type type)
+        internal static (ServiceLifetime, Type?, bool?,object?) GetProperties(Type type)
             => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation))
+                            .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation,att.ServiceKey))
                             .Single();
 
+        /// <inheritdoc/>
+
+        public override string ToString() => $"{nameof(LifetimeType)}:{LifetimeType}" +
+            $",    {nameof(ImplementationType)}:{ImplementationType?.ToString() ?? "null"}" +
+            $",    {nameof(UseImplementation)}:{UseImplementation?.ToString() ?? "null"}" +
+            $",  {nameof(ServiceKey)}:{ServiceKey?.ToString() ?? "null"}";
     }
 }
