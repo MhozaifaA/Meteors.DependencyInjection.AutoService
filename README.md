@@ -28,7 +28,7 @@ build.Services.AddAutoService();
 [AutoService(LifetimeType,ImplementationType)]
 [AutoService(LifetimeType,UseImplementation)]
 [AutoService(ImplementationType,UseImplementation)] 
-[AutoService(LifetimeType,ImplementationType,UseImplementation)]
+[AutoService(LifetimeType,ImplementationType,UseImplementation,ServiceKey)]
 
 
 [AutoService] //default Scoped
@@ -56,6 +56,9 @@ class AnyService : ICustomInterfaceName { }
 
 [AutoService(false)] //UseImplementation=false
 class AnyService : ICustomInterfaceName { }
+
+[AutoService("servicekeyed")] //take class, and get by servicekeyed
+class AnyService {}
 
 
 ```
