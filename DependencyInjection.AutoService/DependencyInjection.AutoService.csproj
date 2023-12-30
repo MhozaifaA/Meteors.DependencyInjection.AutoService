@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Meteors.$(AssemblyName)</PackageId>
-    <Version>6.2.2</Version>
+    <Version>8.0.0</Version>
     <Authors>MhozaifaA</Authors>
     <PackageProjectUrl>https://github.com/MhozaifaA/DependencyInjection.AutoService.git</PackageProjectUrl>
     <PackageIcon>Meteor logo pack.png</PackageIcon>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
