@@ -1,9 +1,10 @@
 # [Meteors]  DependencyInjection.AutoService
 [<img alt="Nuget" src="https://img.shields.io/nuget/dt/Meteors.DependencyInjection.AutoService?color=green&logo=nuget&logoColor=blue&style=for-the-badge">](https://www.nuget.org/packages/Meteors.DependencyInjection.AutoService/)
 
-### ``Install-Package Meteors.DependencyInjection.AutoService -Version 6.2.0``
+[![](https://img.shields.io/nuget/v/Meteors.DependencyInjection.AutoService)](https://www.nuget.org/packages/Meteors.DependencyInjection.AutoService)
 
-> `version 1.0 net6.0`
+### ``Install-Package Meteors.DependencyInjection.AutoService -Version 8.0.0``
+
 
 <p align="center">
 <img width="10%" src="https://user-images.githubusercontent.com/48151918/175791394-3913f060-5551-435c-adda-5bc487964f1c.png" />
