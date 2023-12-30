@@ -112,7 +112,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
             {
-                (ServiceLifetime lifetime, Type? implementationType, bool? useImplementation) = AutoServiceAttribute.GetProperties(type);
+                (ServiceLifetime lifetime, Type? implementationType, bool? useImplementation, object? serviceKey) = AutoServiceAttribute.GetProperties(type);
 
                 ServiceDescriptor? item = default;
 
@@ -130,7 +130,7 @@ namespace Microsoft.Extensions.DependencyInjection
                             implementationType = implementationTypes.First();
 
                         if (implementationType is null && useImplementation is null) // service as  useImplementation = false
-                            item = new ServiceDescriptor(type, type, lifetime);
+                            item = new ServiceDescriptor(type, serviceKey, type, lifetime);
 
                         if (implementationType is null && item is null)
                             throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} or no Interface taken as first default.");
@@ -139,10 +139,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
 
                 if (implementationType is not null)
-                    item = new ServiceDescriptor(implementationType, type, lifetime);
+                    item = new ServiceDescriptor(implementationType, serviceKey, type, lifetime);
 
                 if (useImplementation is false)
-                    item = new ServiceDescriptor(type, type, lifetime);
+                    item = new ServiceDescriptor(type, serviceKey, type, lifetime);
 
                 services.Add(item!);
             }
