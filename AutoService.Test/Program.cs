@@ -48,6 +48,7 @@ public class ClassBase
 //................
 
 [AutoService]
+[AutoService(useImplementation: false, supportLazy: true)]
 public class Class : ClassBase, IClass
 {
     public Class() : base(nameof(Class)) { }
@@ -75,19 +76,19 @@ public class Class3 : ClassBase, IClass
 
 //........................................
 
-[AutoService(false)]
+[AutoService(useImplementation: false)]
 public class Class4 : ClassBase, IClass
 {
     public Class4() : base(nameof(Class4)) { }
 }
 
-[AutoService(ServiceLifetime.Transient, false)]
+[AutoService(ServiceLifetime.Transient, useImplementation: false)]
 public class Class5 : ClassBase, IClass
 {
     public Class5() : base(nameof(Class5)) { }
 }
 
-[AutoService(ServiceLifetime.Singleton, false)]
+[AutoService(ServiceLifetime.Singleton, useImplementation: false)]
 public class Class6 : ClassBase, IClass
 {
     public Class6() : base(nameof(Class6)) { }
@@ -97,7 +98,7 @@ public class Class6 : ClassBase, IClass
 
 
 
-[AutoService]
+[AutoService(useImplementation: false)]
 public class Class7 : ClassBase//, IClass
 {
     public Class7() : base(nameof(Class7)) { }
@@ -113,20 +114,20 @@ public class Class8 : ClassBase//, IClass
 //........................................
 
 
-[AutoService(typeof(IClass))]
+[AutoService(interfaceType: typeof(IClass))]
 public class Class9 : ClassBase, IClass
 {
     public Class9() : base(nameof(Class9)) { }
 }
 
 
-[AutoService(typeof(IClass), true)]
+[AutoService(interfaceType: typeof(IClass), useImplementation: true)]
 public class Class10 : ClassBase, IClass
 {
     public Class10() : base(nameof(Class10)) { }
 }
 
-[AutoService(typeof(IClass), false)]
+[AutoService(interfaceType: typeof(IClass), useImplementation: false)]
 public class Class11 : ClassBase, IClass
 {
     public Class11() : base(nameof(Class11)) { }
@@ -161,7 +162,7 @@ public class Class15 : ClassBase //,IClass
 }
 
 
-[AutoService("servicekey")]
+[AutoService(serviceKey: "servicekey")]
 public class Class16 : ClassBase, IClass
 {
     public Class16() : base(nameof(Class16)) { }
@@ -188,22 +189,30 @@ public static class Extensions
 {
     public static ServiceProvider CompainTest<TClass>(this ServiceProvider _serviceProvider) where TClass : ClassBase
     {
-        Console.ForegroundColor = ConsoleColor.Green;
 
-        var attr = typeof(TClass).GetCustomAttributes(typeof(AutoServiceAttribute), false).Cast<AutoServiceAttribute>().
-            Select(att => att).FirstOrDefault();
+        var attrs = typeof(TClass).GetCustomAttributes(typeof(AutoServiceAttribute), false).Cast<AutoServiceAttribute>();
 
-        Console.WriteLine($"{Environment.NewLine} {typeof(TClass).Name} {nameof(AutoServiceAttribute)} " + $" {attr}");
+        Console.ForegroundColor = ConsoleColor.Yellow;
 
-        Console.ResetColor();
+        Console.WriteLine($"{Environment.NewLine} -----{typeof(TClass).Name} {nameof(AutoServiceAttribute)} " + $" attes {attrs.Count()}");
 
-        _serviceProvider.TwiceTest<TClass>(attr); //test
+        foreach (var attr in attrs)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
 
-        Console.ForegroundColor = ConsoleColor.DarkBlue;
-        Console.WriteLine($"In Scope");
-        Console.ResetColor();
+            Console.WriteLine($"{Environment.NewLine} {typeof(TClass).Name} {nameof(AutoServiceAttribute)} " + $" {attr}");
 
-        _serviceProvider.TwiceScopeTest<TClass>(attr); //test scope
+            Console.ResetColor();
+
+            _serviceProvider.TwiceTest<TClass>(attr); //test
+
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine($"In Scope");
+            Console.ResetColor();
+
+            _serviceProvider.TwiceScopeTest<TClass>(attr); //test scope
+        }
+
 
         return _serviceProvider;
     }
@@ -222,6 +231,9 @@ public static class Extensions
             provider.PrintService<TClass>(attr);
         });
     }
+
+  
+
 
     public static void GenerateService<TClass>(this ServiceProvider _serviceProvider, AutoServiceAttribute? attr) where TClass : ClassBase
     {
@@ -250,10 +262,10 @@ public static class Extensions
         //**this work when use-interface not selected and **not found interface same class name with I,
         // or ((then order)) when implemnt = false
         Type? implementationType = null;
-        if (attr.ImplementationType is null && (attr.UseImplementation is null || attr.UseImplementation is true))
+        if (attr.ImplementationType is null && attr.UseImplementation is true)
         {
 
-             implementationType = typeof(TClass).GetInterface("I" + typeof(TClass).Name);
+            implementationType = typeof(TClass).GetInterface("I" + typeof(TClass).Name);
             if (implementationType is null)
             {
                 var allimplementationTypes = typeof(TClass).GetInterfaces();
@@ -263,26 +275,30 @@ public static class Extensions
                 if (implementationTypes.Count() > 0)
                     implementationType = implementationTypes.First();
 
-                if (implementationType is null && attr.UseImplementation is null)
+                if (implementationType is null && attr.UseImplementation is false)
                     provider.GetServices<TClass>().OfType<TClass>().First().Print();//TClass
             }
 
         }
 
         if (implementationType is not null)
-           provider.GetServicesOrKeyedServices<IClass>(attr).OfType<TClass>().First().Print(); //IClass
+            provider.GetServicesOrKeyedServices<IClass>(attr).OfType<TClass>().First().Print(); //IClass
 
 
         if (attr.UseImplementation is false)
             provider.GetServicesOrKeyedServices<TClass>(attr).OfType<TClass>().First().Print(); //TClass
 
+        if(attr.SupportLazy is true)
+            provider.GetServicesOrKeyedServices<Lazy<TClass>>(attr).OfType<Lazy<TClass>>().First().Value.Print();
+
     }
+
 
     private static IEnumerable<OClass> GetServicesOrKeyedServices<OClass>(this IServiceProvider provider, AutoServiceAttribute? attr)
     {
-        if(attr?.ServiceKey is not null)
-             return provider.GetKeyedServices<OClass>(attr!.ServiceKey); //TClass
-        
+        if (attr?.ServiceKey is not null)
+            return provider.GetKeyedServices<OClass>(attr!.ServiceKey); //TClass
+
         return provider.GetServices<OClass>(); //TClass
     }
 

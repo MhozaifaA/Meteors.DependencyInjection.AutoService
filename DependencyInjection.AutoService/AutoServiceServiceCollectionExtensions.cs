@@ -97,6 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Inject all <see cref="AutoServiceAttribute"/> users by <see cref="ServiceLifetime"/>
         /// <list type="bullet">
         /// <item>[AutoService()]</item>
+        /// <item>[AutoService(supportLazy)]</item>
         /// <item>[AutoService(lifetime)]</item>
         /// <item>[AutoService(implementationType)]</item>
         /// <item>[AutoService(useImplementation)]</item>
@@ -110,43 +111,83 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="type"></param>
         private static void InjectServices(IServiceCollection services, Type type)
         {
-            if (Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
+            if (!Attribute.IsDefined(type, typeof(AutoServiceAttribute)))
+                return;
+
+            var attrs = type.GetCustomAttributes<AutoServiceAttribute>();
+
+            foreach (var attr in attrs)
             {
-                (ServiceLifetime lifetime, Type? implementationType, bool? useImplementation, object? serviceKey) = AutoServiceAttribute.GetProperties(type);
+                (ServiceLifetime lifetime, Type? implementationType, bool useImplementation, object? serviceKey, bool supportLazy) = attr;
 
-                ServiceDescriptor? item = default;
+                implementationType ??= GetImplementationType(type, useImplementation);
+                if (implementationType is null && useImplementation == true)
+                    throw new AmbiguousMatchException($"There is not a matching interface named 'I{type.Name}'. Please check '{type.Name}' or ensure there is a default interface.");
 
+                var serviceType = useImplementation ? implementationType : type;
+                var descriptor = new ServiceDescriptor(serviceType, serviceKey, type, lifetime);
+                services.Add(descriptor);
 
-                if (implementationType is null && (useImplementation is null || useImplementation is true))  // check work flow of useImplementation if init value or leave as null=true in condition but later as false,,in same brack
+                if (supportLazy)
                 {
-                    implementationType = type.GetInterface("I" + type.Name);
-                    if (implementationType is null)
-                    {
-                        var allimplementationTypes = type.GetInterfaces();
-                        var implementationTypes = allimplementationTypes.Except(
-                                         allimplementationTypes.SelectMany(i => i.GetInterfaces()));
-
-                        if (implementationTypes.Count() > 0)
-                            implementationType = implementationTypes.First();
-
-                        if (implementationType is null && useImplementation is null) // service as  useImplementation = false
-                            item = new ServiceDescriptor(type, serviceKey, type, lifetime);
-
-                        if (implementationType is null && item is null)
-                            throw new AmbiguousMatchException($"There is not match interface named {"I" + type.Name} \n please check {type.Name} or no Interface taken as first default.");
-                    }
+                    var descripte = CreateLazyServiceDescriptor(serviceType, lifetime);
+                    services.Add(descripte);
                 }
 
-
-                if (implementationType is not null)
-                    item = new ServiceDescriptor(implementationType, serviceKey, type, lifetime);
-
-                if (useImplementation is false)
-                    item = new ServiceDescriptor(type, serviceKey, type, lifetime);
-
-                services.Add(item!);
             }
 
         }
+
+
+
+
+
+        private static Type? GetImplementationType(Type type, bool useImplementation)
+        {
+            if (!useImplementation)
+                return null;
+
+            var interfaceName = "I" + type.Name;
+            var implementationType = type.GetInterface(interfaceName);
+
+            if (implementationType == null)
+            {
+                var allInterfaces = type.GetInterfaces();
+                var directInterfaces = allInterfaces.Except(allInterfaces.SelectMany(i => i.GetInterfaces()));
+
+                if (directInterfaces.Any())
+                    implementationType = directInterfaces.First();
+            }
+
+            return implementationType;
+        }
+
+        public static ServiceDescriptor CreateLazyServiceDescriptor(Type serviceType, ServiceLifetime lifetime)
+        {
+
+            var lazyServiceType = typeof(Lazy<>).MakeGenericType(serviceType);
+
+            var lazyServiceImplementationType = typeof(LazyService<>).MakeGenericType(serviceType);
+
+            var descripte = new ServiceDescriptor(lazyServiceType, lazyServiceImplementationType, lifetime);
+            return descripte;
+        }
+
+        internal class LazyService<T> : Lazy<T> where T : class
+        {
+            public LazyService(IServiceProvider serviceProvider)
+                : base(() =>
+                 serviceProvider.GetRequiredService<T>()
+                )
+            { }
+
+            //public LazyService(IServiceScopeFactory scopeFactory)
+            //  : base(() =>
+            //  {
+            //      var scope = scopeFactory.CreateScope();
+            //      return scope.ServiceProvider.GetRequiredService<T>();
+            //  }) { }
+        }
+
     }
 }

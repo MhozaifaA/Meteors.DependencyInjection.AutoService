@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-using Meteors.Helper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Meteors
@@ -33,22 +32,23 @@ namespace Meteors
     /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
     /// <list type="number">
     /// <item>[AutoService()]</item>*
-    /// <item>[AutoService(<see cref="LifetimeType"/>)]</item>*
+    /// <item>[AutoService(<see cref="Lifetime"/>)]</item>*
+    /// <item>[AutoService(<see cref="SupportLazy"/>)]</item>*
     /// <item>[AutoService(<see cref="ImplementationType"/>)]</item>*
     /// <item>[AutoService(<see cref="UseImplementation"/>)]</item>*
-    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="ImplementationType"/>)]</item>*
-    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="UseImplementation"/>)]</item>*
+    /// <item>[AutoService(<see cref="Lifetime"/>,<see cref="ImplementationType"/>)]</item>*
+    /// <item>[AutoService(<see cref="Lifetime"/>,<see cref="UseImplementation"/>)]</item>*
     /// <item>[AutoService(<see cref="ImplementationType"/>,<see cref="UseImplementation"/>)]</item> 
-    /// <item>[AutoService(<see cref="LifetimeType"/>,<see cref="ImplementationType"/>,<see cref="UseImplementation"/>)]</item>*
+    /// <item>[AutoService(<see cref="Lifetime"/>,<see cref="ImplementationType"/>,<see cref="UseImplementation"/>)]</item>*
     /// </list>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public class AutoServiceAttribute : Attribute
     {
         /// <summary>
         /// Inner lifetime  .
         /// </summary>
-        public ServiceLifetime LifetimeType { get; private set; }
+        public ServiceLifetime Lifetime { get; private set; }
 
         /// <summary>
         /// Inner interface  .
@@ -63,10 +63,9 @@ namespace Meteors
         ///  <list type="bullet">
         ///  <item>  <see langword="true"/>: use to service type with implementation only Interface </item> 
         ///  <item>  <see langword="false"/>: use to service type without implementation </item> 
-        ///  <item>  <see langword="null"/>: use to service type with implementation only Interface but if ImplementationType stil null will be false work with condition as true </item> 
         /// </list>
         /// </summary>
-        public bool? UseImplementation { get; private set; }
+        public bool UseImplementation { get; private set; }
 
         /// <summary>
         /// Get the key of the service, if applicable.
@@ -75,166 +74,85 @@ namespace Meteors
 
 
         /// <summary>
-        /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="ImplementationType"/> and <see cref="UseImplementation"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// <para>when <see cref="UseImplementation" langword="false"/>  will igonre implement and inject service </para>
+        /// Register extra service for Lazy as Services.Add(provider => new Lazy(() => provider.GetRequiredService()));
         /// </summary>
-        /// <param name="useImplementation"></param>
+        public bool SupportLazy { get; private set; }
+
+        /// <summary>
+        /// main ctor
+        /// <para> default life <see cref="ServiceLifetime.Scoped"/></para>
+        /// <para>default <paramref name="useImplementation"/> is take I+ or( first if <paramref name="interfaceType"/> <see langword="null"/>) </para>
+        /// </summary>
+        /// <param name="lifetime"> </param>
         /// <param name="interfaceType"></param>
-        /// <param name="lifetime"></param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, bool useImplementation, object? serviceKey = null) => (LifetimeType, ImplementationType, UseImplementation,ServiceKey) = (lifetime, interfaceType, useImplementation, serviceKey);
-
-
-        /// <summary>
-        /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="Type" langword="interface"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// </summary>
-        /// <param name="lifetime"></param>
-        /// <param name="interfaceType"></param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, Type interfaceType, object? serviceKey = null) => (LifetimeType, ImplementationType, ServiceKey) = (lifetime, interfaceType, serviceKey);
-
-
-
-        /// <summary>
-        /// Defult constructor pass <see cref="ServiceLifetime"/> and <see cref="UseImplementation"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// <para>when <see cref="UseImplementation" langword="false"/>  will igonre implement and inject service </para>
-        /// </summary>
-        /// <param name="lifetime"></param>
         /// <param name="useImplementation"></param>
         /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, bool useImplementation, object? serviceKey = null) => (LifetimeType, UseImplementation, ServiceKey) = (lifetime, useImplementation, serviceKey);
-
-
-
-        /// <summary>
-        /// <para>lifetime <see cref="ServiceLifetime.Scoped"/></para>
-        /// Defult constructor pass <see cref="ImplementationType"/> and <see cref="UseImplementation"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// <para>when <see cref="UseImplementation" langword="false"/>  will igonre implement and inject service </para>
-        /// </summary>
-        /// <param name="useImplementation"></param>
-        /// <param name="interfaceType"></param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(Type interfaceType, bool useImplementation, object? serviceKey = null) : this(ServiceLifetime.Scoped, interfaceType, useImplementation, serviceKey) { }
-
-
-
-        /// <summary>
-        /// Default constructor pass not parameters inject <see cref="ServiceLifetime.Scoped"/> .
-        /// Custom attribute uses to inject all Servicers .
-        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// </summary>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(object? serviceKey = null) : this(ServiceLifetime.Scoped, serviceKey) { }
-
-
-        /// <summary>
-        /// Defult constructor pass <see cref="ServiceLifetime"/> .
-        /// Custom attribute uses to inject all Servicers .
-        /// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// </summary>
-        /// <param name="lifetime"></param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(ServiceLifetime lifetime, object? serviceKey = null) => (LifetimeType, ServiceKey) = (lifetime, serviceKey);
-
-
-
-
-
-        /// <summary>
-        /// Default constructor pass <see cref="Type" langword="interface"/>.
-        /// </summary>
-        /// <param name="interfaceType">inteface to inject with this service</param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(Type interfaceType, object? serviceKey = null) : this(ServiceLifetime.Scoped, interfaceType, serviceKey) { }
-
-
-        /// <summary>
-        /// <para>lifetime <see cref="ServiceLifetime.Scoped"/></para>
-        /// Defult constructor pass <see cref="UseImplementation"/>.
-        /// Custom attribute uses to inject all Servicers .
-        /// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
-        /// <para>when <see cref="UseImplementation" langword="false"/>  will igonre implement and inject service </para>
-        /// </summary>
-        /// <param name="useImplementation"></param>
-        /// <param name="serviceKey"></param>
-        public AutoServiceAttribute(bool useImplementation, object? serviceKey = null) : this(ServiceLifetime.Scoped, useImplementation, serviceKey) { }
-
+        /// <param name="supportLazy"></param>
+        public AutoServiceAttribute(ServiceLifetime lifetime = ServiceLifetime.Scoped, Type? interfaceType = null, bool useImplementation = true, object? serviceKey = null, bool supportLazy = false) => (Lifetime, ImplementationType, UseImplementation, ServiceKey, SupportLazy) = (lifetime, interfaceType, useImplementation, serviceKey, supportLazy);
 
 
 
         ///// <summary>
-        ///// Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> .
-        ///// Custom attribute uses to inject all Servicers .
-        ///// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        ///// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+        ///// Reflection get <see cref="ServiceLifetime"/> which used with Services .
         ///// </summary>
-        ///// <param name="lifetime"></param>
-        ///// <param name="serviceKey"></param>
-        //public AutoServiceAttribute(string lifetime, object? serviceKey = null) : this(lifetime.ToEnum<ServiceLifetime>(), serviceKey) { }
-
+        ///// <param name="type"></param>
+        ///// <returns>ServiceLifetime</returns>
+        //internal static ServiceLifetime GetLifetime(Type type)
+        //    => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
+        //                    .Cast<AutoServiceAttribute>().Select(x => x.LifetimeType)
+        //                    .Single();
 
 
         ///// <summary>
-        /////  Help constructor pass <see cref="string"/> of typo <see cref="ServiceLifetime"/> and pass  <see cref="Type" langword="interface"/>.
-        ///// Custom attribute uses to inject all Servicers .
-        ///// <para>Warning: better inhernet all services from <see langword="I"/>[Name your repo] </para>
-        ///// <para> will work default when  see same service type same interface name With I at start/else will work by <see cref="ImplementationType"/> then <see cref="UseImplementation"/> </para>
+        ///// Reflection get <see cref="Type" langword="interface"/>. which used with Services .
         ///// </summary>
-        ///// <param name="lifetime"></param>
-        ///// <param name="interfaceType"></param>
-        ///// <param name="serviceKey"></param>
-        //public AutoServiceAttribute(string lifetime, Type interfaceType, object? serviceKey = null) : this(lifetime.ToEnum<ServiceLifetime>(), interfaceType, serviceKey) { }
+        ///// <param name="type"></param>
+        ///// <returns> Type? </returns>
+        //internal static Type? GetInterface(Type type)
+        //    => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
+        //                    .Cast<AutoServiceAttribute>().Select(x => x.ImplementationType)
+        //                    .Single();
 
 
-
-        /// <summary>
-        /// Reflection get <see cref="ServiceLifetime"/> which used with Services .
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns>ServiceLifetime</returns>
-        internal static ServiceLifetime GetLifetime(Type type)
-            => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(x => x.LifetimeType)
-                            .Single();
-
-
-        /// <summary>
-        /// Reflection get <see cref="Type" langword="interface"/>. which used with Services .
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns> Type? </returns>
-        internal static Type? GetInterface(Type type)
-            => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(x => x.ImplementationType)
-                            .Single();
-
-
-        /// <summary>
-        /// Reflection get All which used with Services .
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns>ServiceLifetime</returns>
-        internal static (ServiceLifetime, Type?, bool?,object?) GetProperties(Type type)
-            => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
-                            .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation,att.ServiceKey))
-                            .Single();
+        ///// <summary>
+        ///// Reflection get All which used with Services .
+        ///// </summary>
+        ///// <param name="type"></param>
+        ///// <returns>ServiceLifetime</returns>
+        //internal static (ServiceLifetime, Type?, bool, object?, bool) GetProperties(Type type)
+        //    => type.GetCustomAttributes(typeof(AutoServiceAttribute), false)
+        //                    .Cast<AutoServiceAttribute>().Select(att => (att.LifetimeType, att.ImplementationType, att.UseImplementation, att.ServiceKey, att.SupportLazy))
+        //                    .Single();
 
         /// <inheritdoc/>
 
-        public override string ToString() => $"{nameof(LifetimeType)}:{LifetimeType}" +
-            $",    {nameof(ImplementationType)}:{ImplementationType?.ToString() ?? "null"}" +
-            $",    {nameof(UseImplementation)}:{UseImplementation?.ToString() ?? "null"}" +
-            $",  {nameof(ServiceKey)}:{ServiceKey?.ToString() ?? "null"}";
+        public override string ToString() => $"{nameof(Lifetime)}:{Lifetime}" +
+            $", {nameof(ImplementationType)}:{ImplementationType?.ToString() ?? "null"}" +
+            $", {nameof(UseImplementation)}:{UseImplementation}" +
+            $", {nameof(ServiceKey)}:{ServiceKey?.ToString() ?? "null"}" +
+            $", {nameof(SupportLazy)}:{SupportLazy}";
+
+
+        /// <summary>
+        /// Get all properties of <see cref="AutoServiceAttribute"/> in one deconstruct method.
+        /// </summary>
+        /// <param name="lifetime"></param>
+        /// <param name="implementationType"></param>
+        /// <param name="useImplementation"></param>
+        /// <param name="serviceKey"></param>
+        /// <param name="supportLazy"></param>
+        public void Deconstruct(
+            out ServiceLifetime lifetime,
+            out Type? implementationType,
+            out bool useImplementation,
+            out object? serviceKey,
+            out bool supportLazy)
+        {
+            lifetime = Lifetime;
+            implementationType = ImplementationType;
+            useImplementation = UseImplementation;
+            serviceKey = ServiceKey;
+            supportLazy = SupportLazy;
+        }
     }
 }
