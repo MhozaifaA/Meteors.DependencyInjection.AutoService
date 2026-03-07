@@ -3,7 +3,7 @@
 
 [![](https://img.shields.io/nuget/v/Meteors.DependencyInjection.AutoService)](https://www.nuget.org/packages/Meteors.DependencyInjection.AutoService)
 
-### ``Install-Package Meteors.DependencyInjection.AutoService -Version 8.0.0``
+### ``Install-Package Meteors.DependencyInjection.AutoService -Version 10.0.0``
 
 
 <p align="center">
@@ -11,6 +11,83 @@
 </p>
 
 [Source Code](https://github.com/MhozaifaA/DependencyInjection.AutoService)
+
+
+
+
+---
+
+## Setup
+
+```csharp
+builder.Services.AddAutoService();                        // scans all assemblies
+builder.Services.AddAutoService(typeof(MyClass));         // scans specific assembly
+builder.Services.AddAutoService("MyProject.Services");    // scans by assembly name
+```
+
+---
+
+## `[AutoService]` Attribute
+
+Place on any class to register it automatically.
+
+| Usage | Behavior |
+|---|---|
+| `[AutoService]` | Scoped, resolves `I{ClassName}` or first interface |
+| `[AutoService(ServiceLifetime.Singleton)]` | Singleton |
+| `[AutoService(ServiceLifetime.Transient)]` | Transient |
+| `[AutoService(typeof(ICustomInterface))]` | Registers against the specified interface |
+| `[AutoService(useImplementation: false)]` | Registers the class itself (no interface) |
+| `[AutoService(serviceKey: "myKey")]` | Keyed service registration |
+| `[AutoService(supportLazy: true)]` | Also registers `Lazy<T>` for deferred resolution |
+
+---
+
+## Multiple Registrations
+
+Stack multiple `[AutoService]` attributes on the same class to register it against different interfaces:
+
+```csharp
+[AutoService(typeof(IOther))]
+[AutoService]
+public class A : IA, IOther { }
+
+// Registers:  IA     → A  (Scoped)
+//             IOther → A  (Scoped)
+```
+
+---
+
+## Lazy Support
+
+Pass `supportLazy: true` to also register a `Lazy<T>` wrapper, allowing deferred resolution:
+
+```csharp
+[AutoService(supportLazy: true)]
+public class A : IA { }
+```
+
+Both constructor injection styles now work:
+
+```csharp
+public MyService(IA service) { }           // normal — resolved immediately
+public MyService(Lazy service) { }     // lazy   — resolved on first .Value access
+```
+
+> `Lazy<T>` is registered as `Scoped` to ensure the captured `IServiceProvider` is always the current scope — preventing root provider capture and scoped service leaks.
+
+---
+
+## Interface Resolution Rules
+
+When no `implementationType` is specified, the library resolves the interface in this order:
+
+1. Interface named `I{ClassName}` (e.g. `class UserService` → `IUserService`)
+2. First direct interface on the class
+3. Throws `AmbiguousMatchException` if `useImplementation: true` but no interface found
+
+---
+
 
 ``` C#
 
